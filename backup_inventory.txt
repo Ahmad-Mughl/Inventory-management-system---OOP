@@ -1,0 +1,5 @@
+A001	Beverages	Sting	300	20
+A002	Dairy	Olpers Milk	550	12
+A003	Bakery	Brown Bread	950	21
+A004	Health	Panadol 	13	90
+A005	Frozen	Frozen Chicken	770	34

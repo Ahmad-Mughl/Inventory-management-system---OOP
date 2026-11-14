@@ -1,0 +1,863 @@
+#include <iostream>
+#include <fstream>
+#include <ctime>
+#include <cstdlib>
+#include <string>
+using namespace std;
+
+
+class Item{
+
+private:
+	string ID;
+	string category;
+	string name;
+	float price;
+	int quantity;
+
+public:
+
+	void set_Item(string, string, string, float, int);
+	void set_quantity(int);
+	void set_price(float);
+
+	string get_ID(void);
+	string get_cateogry(void);
+	string get_name(void);
+	float get_price(void);
+	int get_quantity(void);
+
+	void display_item(void);
+
+	bool operator==(Item);
+	bool operator != (Item);
+
+	
+	friend bool operator == (string, Item);
+	
+};
+
+void Item::set_Item(string s_ID, string s_cat, string s_name, float s_price, int s_quantity){
+	ID = s_ID;
+	category = s_cat;
+	name = s_name;
+	price = s_price;
+	quantity = s_quantity;
+}
+
+void Item::set_quantity(int new_quantity){
+	quantity = new_quantity;
+}
+
+void Item::set_price(float new_price){
+	price = new_price;
+}
+
+string Item::get_ID(void){
+	return this->ID;
+}
+
+string Item::get_cateogry(void){
+	return category;
+}
+
+string Item::get_name(void){
+	return name;
+}
+
+float Item::get_price(void){
+	return price;
+}
+
+int Item::get_quantity(void){
+	return quantity;
+}
+
+void Item::display_item(void){
+	cout << "Product ID: " << ID << endl;
+	cout << "Product Category: " << category << endl;
+	cout << "Product Name: " << name << endl;
+	cout << "Product Price: " << price << endl;
+	cout << "Product Quantity: " << quantity << endl;
+
+}
+
+
+bool Item::operator==(Item to_compare){
+	if (ID == to_compare.ID){
+		return true;
+	}
+
+	return false;
+}
+
+bool Item::operator!=(Item to_compare){
+
+	if (this->ID != to_compare.ID){
+		return true;
+	}
+
+	return false;
+}
+
+bool operator==(string to_find, Item item){
+
+	if (item.ID == to_find){
+		return true;
+	}
+	else if (item.category == to_find){
+		return true;
+	}
+	else if (item.name == to_find){
+		return true;
+	}
+
+	return false;
+
+}
+
+class Dairy : public Item{
+
+private:
+
+	
+
+public:
+	
+
+
+};
+
+class Bakery : public Item{
+
+private:
+
+public:
+
+
+};
+
+class Beverages : public Item{
+
+private:
+
+public:
+
+
+};
+
+class Household : public Item{
+
+private:
+
+public:
+
+
+};
+
+class Health : public Item{
+
+private:
+
+public:
+
+};
+
+
+class Inventory{
+
+private:
+	int inventory_size;
+	Item* inv_items;
+
+public:
+
+	void set_inventory_size(int);
+	int get_inventory_size(void);
+
+	void set_inventory(Item*);
+
+	void add_item(Item);
+	void delete_item(Item);
+	void update_quantity(Item,int);
+	void update_price(Item, float);
+
+	void search(string);
+
+	void update_quantity(string, int);
+
+	void show_inventory(void);
+	void operator= (Inventory);
+
+	Item take_item(string);
+
+	friend bool operator ==(string, Inventory);
+};
+
+void Inventory::set_inventory_size(int size){
+	inv_items = new Item[size];
+	inventory_size = size;
+}
+
+int Inventory::get_inventory_size(void){
+	return inventory_size;
+}
+
+void Inventory::set_inventory(Item* items){
+
+	for (int i = 0; i < inventory_size; i++){
+		inv_items[i] = items[i];
+	}
+
+}
+
+Item Inventory::take_item(string ref_search){
+
+	Item null;
+
+	int false_count = 0;
+
+	for (int i = 0; i < inventory_size; i++){
+		if (ref_search == inv_items[i].get_ID()){
+			return inv_items[i];
+		}
+		else{
+			false_count++;
+		}
+	}
+	
+	if (false_count == inventory_size){
+		cout << "Product Not Found" << endl;
+	}
+
+	return null;
+}
+
+
+void Inventory::add_item(Item to_add){
+
+	Item* temp_item = new Item[inventory_size];
+
+	for (int i = 0; i < inventory_size; i++){
+		temp_item[i] = inv_items[i];
+	}
+
+	delete[] inv_items;
+
+	inventory_size = inventory_size + 1;
+
+	inv_items = new Item[inventory_size];
+
+	for (int i = 0; i < inventory_size - 1; i++){
+		inv_items[i] = temp_item[i];
+	}
+
+	inv_items[inventory_size - 1] = to_add;
+
+	delete[] temp_item;
+	temp_item = NULL;
+}
+
+void Inventory::delete_item(Item to_remove){
+
+	int index_to_remove = 0;
+
+	int false_counter = 0;
+
+	for (int i = 0; i < inventory_size; i++){
+
+		if (inv_items[i] == to_remove){
+
+			index_to_remove = i;
+			Item* temp_item = new Item[inventory_size];
+
+			for (int i = 0; i < inventory_size; i++){
+				temp_item[i] = inv_items[i];
+			}
+
+			delete[] inv_items;
+			inventory_size = inventory_size - 1;
+			inv_items = new Item[inventory_size];
+
+			Item temp = temp_item[index_to_remove];
+			for (int i = 0; i < inventory_size; i++){
+				if (temp_item[i] != temp){
+					inv_items[i] = temp_item[i];
+				}
+			}
+			
+			delete[] temp_item;
+			temp_item = NULL;
+		}
+
+		else{
+			false_counter++;
+		}
+	}
+
+	if (false_counter == inventory_size){
+		cout << "Product Not Found" << endl;
+	}
+}
+
+void Inventory::update_quantity(Item to_update, int new_quantity){
+
+	int false_count = 0;
+
+	for (int i = 0; i < inventory_size; i++){
+
+		if (to_update == inv_items[i]){
+			inv_items[i].set_quantity(new_quantity);
+		}
+
+		else{
+			false_count++;
+		}
+	}
+	
+	if (false_count == inventory_size){
+		cout << "Product Not Found" << endl;
+	}
+
+}
+
+void Inventory::update_price(Item to_update, float new_price){
+
+	int false_count = 0;
+	for (int i = 0; i < inventory_size; i++){
+
+		if (to_update == inv_items[i]){
+			inv_items[i].set_price(new_price);
+		}
+		else{
+			false_count++;
+		}
+	}
+
+	if (false_count == inventory_size){
+		cout << "Product Not Found " << endl;
+	}
+}
+
+// remeber to chnage from string to template
+void Inventory::search(string to_search){
+
+	int false_count = 0;
+
+	for (int i = 0; i < inventory_size; i++){
+
+		if (to_search == inv_items[i]){
+			inv_items[i].display_item();
+		}
+		else{
+			false_count++;
+		}
+	}
+
+	if (false_count == inventory_size){
+		cout << "Product Not Found " << endl;
+	}
+}
+
+void Inventory::operator=(Inventory to_equate){
+
+	this->inv_items = to_equate.inv_items;
+	for (int i = 0; i < to_equate.inventory_size; i++){
+		this->inv_items[i] = to_equate.inv_items[i];
+	}
+
+	inventory_size = to_equate.inventory_size;
+}
+
+void Inventory::update_quantity(string to_update, int new_quantity){
+
+	int false_count = 0;
+
+	for (int i = 0; i < inventory_size; i++){
+
+		if (to_update == inv_items[i].get_ID()){
+			inv_items[i].set_quantity(new_quantity);
+		}
+
+		else{
+			false_count++;
+		}
+	}
+
+	if (false_count == inventory_size){
+		cout << "Product Not Found" << endl;
+	}
+
+}
+
+
+bool operator==(string to_find, Inventory from_find){
+
+	for (int i = 0; i < from_find.get_inventory_size(); i++){
+		if (to_find == from_find.inv_items[i].get_ID()){
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void Inventory::show_inventory(void){
+
+	cout << "__________________________________________________________________________________________" << endl;
+	cout << endl;
+	cout << "Product ID" << "\t" << "Product Category" << "\t" << "Product Name" << "\t" << "Product Price" 
+		<< "\t" <<"Product Quantity" << endl;
+	
+	for (int i = 0; i < inventory_size; i++){
+
+		cout << inv_items[i].get_ID() << "\t" << "\t" << inv_items[i].get_cateogry() << "\t" << "\t" <<  "\t" << inv_items[i].get_name()
+			<< "\t" << "\t" << inv_items[i].get_price() << "\t" << "\t" << inv_items[i].get_quantity() << endl;
+	}
+
+	cout << endl;
+	cout << "__________________________________________________________________________________________" << endl;
+}
+
+
+
+
+
+class Purchase{
+
+private:
+	Inventory my_inventory;
+
+public:
+
+	void set_inventory(Inventory);
+	void addToCart(string, int);
+
+};
+
+void Purchase::set_inventory(Inventory user_inventory){
+	my_inventory = user_inventory;
+}
+
+void Purchase::addToCart(string to_find, int amount){
+	
+	int false_count = 0;
+
+	for (int i = 0; i < my_inventory.get_inventory_size(); i++){
+
+		if (to_find == my_inventory){
+			int quantity_after_purchase = my_inventory.get_inventory_size() - amount;
+			my_inventory.update_quantity(to_find, quantity_after_purchase);
+		}
+
+		else{
+			false_count++;
+		}
+
+	}
+
+	if (false_count == my_inventory.get_inventory_size()){
+		cout << "Product Not Found" << endl;
+	}
+
+}
+
+
+
+
+
+class Record{
+
+private:
+	Item* purchased_items;
+	int total_items_purchased = 0;
+
+public:
+
+	void add_purchase_item_number(void);
+	int get_purchase_number(void);
+	void add_to_Customer_Record(Item, int);
+
+	//float calculate_discount(Item, float);
+
+	virtual void display_record(void);
+};
+
+void Record::add_purchase_item_number(void){
+	total_items_purchased++;
+}
+
+int Record::get_purchase_number(void){
+	return total_items_purchased;
+}
+
+
+void Record::add_to_Customer_Record(Item purchased_item, int quantity_purchased){
+
+	if (total_items_purchased == 1){
+		purchased_items = new Item[1];
+		purchased_items[0].set_quantity(quantity_purchased);
+		purchased_items[0] = purchased_item;
+	}
+
+	else if (total_items_purchased > 1){
+
+		Item* temp_item = new Item[total_items_purchased - 1];
+
+		for (int i = 0; i < total_items_purchased - 1; i++){
+			temp_item[i] = purchased_items[i];
+		}
+
+		delete purchased_items;
+
+		purchased_items = new Item[total_items_purchased];
+
+		for (int i = 0; i < total_items_purchased - 1; i++){
+			purchased_items[i] = temp_item[i];
+		}
+		purchased_items[total_items_purchased - 1] = purchased_item;
+		purchased_items[total_items_purchased - 1].set_quantity(quantity_purchased);
+	}
+
+}
+
+void Record::display_record(void){
+
+	cout << "\t \t Purchased Item(s)" << endl;
+
+	for (int i = 0; i < total_items_purchased; i++){
+		cout << "\t" << purchased_items[i].get_name() << "\t" << purchased_items[i].get_cateogry() 
+			<< "\t" << purchased_items[i].get_price() << "\t" << purchased_items[i].get_quantity() << endl;
+	}
+
+	cout << "Date of Purchase: ";
+
+	/*time_t currentTime = time(nullptr);
+	tm* localTime = localtime(&currentTime);
+
+	int year = localTime->tm_year + 1900;
+	int month = localTime->tm_mon + 1;
+	int day = localTime->tm_mday;
+
+	cout << year << "-" << month << "-" << day << endl;*/
+
+	cout << "19-05-2023" << endl;
+
+	cout << "Total Bill: Rs. ";
+
+	float total_bill = 0;
+
+	for (int i = 0; i < total_items_purchased; i++){
+		total_bill = total_bill + (purchased_items[i].get_price() * purchased_items[i].get_quantity());
+	}
+
+	cout << total_bill << endl;
+}
+
+class Employee{
+
+private:
+	string employee_ID;
+	string designation;
+	string name; 
+	float salary;
+	string date;
+
+
+public:
+
+	string get_designation(void);
+	string get_employee_ID(void);
+	string get_name(void);
+
+
+	void set_Employee(string, string, string, float, string);
+
+	virtual bool is_employee(string);
+
+
+};
+
+void Employee::set_Employee(string S_employee_ID, string S_designation, string S_name, float S_salary, string S_date){
+	employee_ID = S_employee_ID;
+	designation = S_designation;
+	name = S_name;
+	salary = S_salary;
+	date = S_date;
+}
+
+bool Employee::is_employee(string employee_to_check){
+
+	if (employee_to_check == name || employee_to_check == employee_ID){
+		return true;
+	}
+
+	return false;
+}
+
+string Employee::get_designation(void){
+	return designation;
+}
+
+string Employee::get_employee_ID(void){
+	return employee_ID;
+}
+
+string Employee::get_name(void){
+	return name;
+}
+
+
+class Sale_Employee : public Employee{
+
+private:
+
+public:
+	
+
+	bool is_employee(string);
+
+};
+
+bool Sale_Employee::is_employee(string employee_to_check){
+
+	if (employee_to_check == get_employee_ID() || employee_to_check == get_name()){
+		if (get_designation() == "Cashier"){
+			return true;
+		}
+	}
+
+	return false;
+
+}
+
+
+class Reciept : public Record{
+
+public:
+
+	//Sale_Employee counter_employee;
+	string date;
+
+public:
+
+	void print_receipt(Employee*);
+	void display_record(void);
+};
+
+void Reciept::print_receipt(Employee* employee){
+
+	/*if (employee->is_employee(employee->get_name()) == true){
+		
+		this->display_record();
+
+	}
+	else{
+		cout << "Invalid User. Please Try Again" << endl;
+	}*/
+}
+
+void Reciept::display_record(void){
+
+
+
+}
+
+class Customer{
+	
+private:
+	string name;
+	Purchase customer_purchase;
+	Record customer_record;
+	Reciept customer_reciept;
+
+public:
+
+	Customer(void);
+	Customer(string);
+	void purchase(string, Inventory, int);
+	void print_reciept(Employee*);
+
+};
+
+Customer::Customer(void){
+	name = "Not Available";
+}
+
+Customer::Customer(string customer_name){
+	name = customer_name;
+}
+
+void Customer::purchase(string to_purchase, Inventory inventory, int amount){
+	customer_record.add_purchase_item_number();
+	
+	customer_purchase.set_inventory(inventory);
+	customer_purchase.addToCart(to_purchase, amount);
+
+	Item purchased_item = inventory.take_item(to_purchase);
+
+	customer_record.add_to_Customer_Record(purchased_item, amount);
+
+}
+
+void Customer::print_reciept(Employee* cashier){
+
+	customer_reciept.print_receipt(cashier);
+
+}
+
+void inventory_functionality(int user_option){
+
+}
+
+
+
+
+
+
+
+void interface (void){
+
+	system("CLS");
+	cout << endl;
+	cout << "\t \t WELCOME TO AL MADINAH GROCERY STORE" << endl;
+
+	cout << endl;
+
+	cout << "   Please Choose your desired Functionality" << endl;
+
+	cout << endl;
+
+	cout << "\t \t 1. Inventory Management" << endl;
+	cout << "\t \t 2. Customer Management" << endl;
+	cout << "\t \t 3. Bill Management" << endl;
+	cout << "\t \t 4. Employee Management" << endl;
+
+	int user_option = 0;
+
+	cin >> user_option;
+
+	if (user_option == 1){
+		system("CLS");
+		cout << endl;
+
+		cout << "\t \t 1. View Store Invwntory" << endl;
+		cout << "\t \t 2. Add Item to Inventory" << endl;
+		cout << "\t \t 3. Delete Item from Invwntory" << endl;
+		cout << "\t \t 4. Update Item Quantity" << endl;
+		cout << "\t \t 5. Update Item Price" << endl;
+
+		cin >> user_option;
+
+		inventory_functionality(user_option);
+
+	}
+
+	else if (user_option == 2){
+		system("CLS");
+		cout << endl;
+
+		cout << "\t \t 1. View Store Invwntory" << endl;
+		cout << "\t \t 2. Add Item to Inventory" << endl;
+		cout << "\t \t 3. Delete Item from Invwntory" << endl;
+		cout << "\t \t 4. Update Item Quantity" << endl;
+
+	}
+
+	else if (user_option == 3){
+		system("CLS");
+		cout << endl;
+
+		cout << "\t \t 1. View Bill Directory" << endl;
+	}
+
+	else if (user_option == 4){
+
+		cout << "\t \t 1. View Employee Directory" << endl;
+	}
+	
+
+
+
+} 
+
+int count_file_data(string file_name){
+
+	ifstream read_data;
+	string file_line;
+
+	int counter = 0;
+
+	read_data.open(file_name);
+
+	while (!read_data.eof()){
+
+		getline(read_data, file_line, '\n');
+
+		if (file_line.length() > 0){
+			counter++;
+		}
+	}
+
+	read_data.close();
+
+	return counter;
+
+}
+
+
+void ReadFile(string file_name, Item* items, int total_items){
+
+	ifstream read_data;
+
+	read_data.open(file_name);
+
+	string R_ID;
+	string R_category;
+	string R_name;
+	float R_price;
+	int R_quantity;
+
+	char nline = '\n';
+
+	for (int i = 0; i < total_items; i++){
+
+		getline(read_data, R_ID, '\t');
+		getline(read_data, R_category, '\t');
+		getline(read_data, R_name, '\t');
+		read_data >> R_price;
+		read_data >> R_quantity;
+		read_data.ignore();
+
+		items[i].set_Item(R_ID, R_category, R_name, R_price, R_quantity);
+	}
+
+	read_data.close();
+
+}
+
+
+
+
+
+int main(){
+
+	const string file_name = "inventory.txt";
+	int grocery_items_in_inventory = count_file_data(file_name);
+
+	Item* grocery_items = new Item[grocery_items_in_inventory];
+
+	ReadFile(file_name, grocery_items, grocery_items_in_inventory);
+
+	Inventory grocery_store_inventory;
+	grocery_store_inventory.set_inventory_size(grocery_items_in_inventory);
+	grocery_store_inventory.set_inventory(grocery_items);
+	
+	grocery_store_inventory.search("Panadol");
+
+	grocery_store_inventory.show_inventory();
+
+	interface();
+	
+	return 0;
+}

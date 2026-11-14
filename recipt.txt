@@ -1,0 +1,6 @@
+Name	Price	Category
+Olpers Milk	550	Dairy
+
+Total Bill: Rs. 1100
+
+Date: 18/05/2023

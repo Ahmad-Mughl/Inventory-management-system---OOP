@@ -1,0 +1,521 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+using namespace std;
+
+
+class Item{
+
+private:
+	string ID;
+	string category;
+	string name;
+	float price;
+	int quantity;
+
+public:
+
+	void set_Item(string, string, string, float, int);
+	void set_quantity(int);
+	void set_price(float);
+	string get_ID(void);
+
+	void display_item(void);
+
+	bool operator==(Item);
+	bool operator != (Item);
+
+	
+	friend bool operator == (string, Item);
+	
+};
+
+void Item::set_Item(string s_ID, string s_cat, string s_name, float s_price, int s_quantity){
+	ID = s_ID;
+	category = s_cat;
+	name = s_name;
+	price = s_price;
+	quantity = s_quantity;
+}
+
+void Item::set_quantity(int new_quantity){
+	quantity = new_quantity;
+}
+
+void Item::set_price(float new_price){
+	price = new_price;
+}
+
+string Item::get_ID(void){
+	return this->ID;
+}
+
+void Item::display_item(void){
+	cout << "Product ID: " << ID << endl;
+	cout << "Product Category: " << category << endl;
+	cout << "Product Name: " << name << endl;
+	cout << "Product Price: " << price << endl;
+	cout << "Product Quantity: " << quantity << endl;
+
+}
+
+bool Item::operator==(Item to_compare){
+	if (ID == to_compare.ID){
+		return true;
+	}
+
+	return false;
+}
+
+bool Item::operator!=(Item to_compare){
+
+	if (this->ID != to_compare.ID){
+		return true;
+	}
+
+	return false;
+}
+
+bool operator==(string to_find, Item item){
+
+	if (item.ID == to_find){
+		return true;
+	}
+	else if (item.category == to_find){
+		return true;
+	}
+	else if (item.name == to_find){
+		return true;
+	}
+
+	return false;
+
+}
+
+class Dairy : public Item{
+
+private:
+
+	
+
+public:
+	
+
+
+};
+
+class Bakery : public Item{
+
+private:
+
+public:
+
+
+};
+
+class Beverages : public Item{
+
+private:
+
+public:
+
+
+};
+
+class Household : public Item{
+
+private:
+
+public:
+
+
+};
+
+class Health : public Item{
+
+private:
+
+public:
+
+};
+
+
+class Inventory{
+
+private:
+	int inventory_size;
+	Item* inv_items;
+
+public:
+
+	void set_inventory_size(int);
+	int get_inventory_size(void);
+
+	void add_item(Item);
+	void delete_item(Item);
+	void update_quantity(Item,int);
+	void update_price(Item, float);
+
+	void search(string);
+
+	void operator= (Inventory);
+
+	friend bool operator ==(Item, Inventory);
+};
+
+void Inventory::set_inventory_size(int size){
+	inv_items = new Item[size];
+	inventory_size = size;
+}
+
+int Inventory::get_inventory_size(void){
+	return inventory_size;
+}
+
+void Inventory::add_item(Item to_add){
+
+	Item* temp_item = new Item[inventory_size];
+
+	for (int i = 0; i < inventory_size; i++){
+		temp_item[i] = inv_items[i];
+	}
+
+	delete[] inv_items;
+
+	inventory_size = inventory_size + 1;
+
+	inv_items = new Item[inventory_size];
+
+	for (int i = 0; i < inventory_size - 1; i++){
+		inv_items[i] = temp_item[i];
+	}
+
+	inv_items[inventory_size - 1] = to_add;
+
+	delete[] temp_item;
+	temp_item = NULL;
+}
+
+void Inventory::delete_item(Item to_remove){
+
+	int index_to_remove = 0;
+
+	int false_counter = 0;
+
+	for (int i = 0; i < inventory_size; i++){
+
+		if (inv_items[i] == to_remove){
+
+			index_to_remove = i;
+			Item* temp_item = new Item[inventory_size];
+
+			for (int i = 0; i < inventory_size; i++){
+				temp_item[i] = inv_items[i];
+			}
+
+			delete[] inv_items;
+			inventory_size = inventory_size - 1;
+			inv_items = new Item[inventory_size];
+
+			Item temp = temp_item[index_to_remove];
+			for (int i = 0; i < inventory_size; i++){
+				if (temp_item[i] != temp){
+					inv_items[i] = temp_item[i];
+				}
+			}
+			
+			delete[] temp_item;
+			temp_item = NULL;
+		}
+
+		else{
+			false_counter++;
+		}
+
+	}
+
+	if (false_counter == inventory_size){
+		cout << "Product Not Found" << endl;
+	}
+}
+
+void Inventory::update_quantity(Item to_update, int new_quantity){
+
+	int false_count = 0;
+
+	for (int i = 0; i < inventory_size; i++){
+
+		if (to_update == inv_items[i]){
+			inv_items[i].set_quantity(new_quantity);
+		}
+
+		else{
+			false_count++;
+		}
+	}
+	
+	if (false_count == inventory_size){
+		cout << "Product Not Found" << endl;
+	}
+
+}
+
+void Inventory::update_price(Item to_update, float new_price){
+
+	int false_count = 0;
+	for (int i = 0; i < inventory_size; i++){
+
+		if (to_update == inv_items[i]){
+			inv_items[i].set_price(new_price);
+		}
+		else{
+			false_count++;
+		}
+	}
+
+	if (false_count == inventory_size){
+		cout << "Product Not Found " << endl;
+	}
+}
+
+// remeber to chnage from string to template
+void Inventory::search(string to_search){
+
+	int false_count = 0;
+
+	for (int i = 0; i < inventory_size; i++){
+
+		if (to_search == inv_items[i]){
+			inv_items[i].display_item();
+		}
+		else{
+			false_count++;
+		}
+	}
+
+	if (false_count == inventory_size){
+		cout << "Product Not Found " << endl;
+	}
+}
+
+void Inventory::operator=(Inventory to_equate){
+
+	this->inv_items = to_equate.inv_items;
+	for (int i = 0; i < to_equate.inventory_size; i++){
+		this->inv_items[i] = to_equate.inv_items[i];
+	}
+
+	inventory_size = to_equate.inventory_size;
+}
+
+bool operator==(Item to_find, Inventory from_find){
+
+	for (int i = 0; i < from_find.get_inventory_size(); i++){
+		if (to_find.get_ID() == from_find.inv_items[i].get_ID()){
+			return true;
+		}
+	}
+
+	return false;
+}
+
+
+//class Customer;
+//
+//class Purchase{
+//
+//private:
+//	Inventory my_inventory;
+//	Customer my_customer;
+//	//Reciept reciept;
+//	//Sale_Employee cashier;
+//
+//public:
+//	
+//	void purchase(Item, int);
+//
+//	void set_inventory(Inventory);
+//
+//
+//};
+//
+//
+//void Purchase::set_inventory(Inventory user_inventory){
+//	my_inventory = user_inventory;
+//}
+//
+//void Purchase::purchase(Item to_purchase, int amount){
+//
+//	int false_count;
+//
+//	for (int i = 0; i < my_inventory.get_inventory_size(); i++){
+//
+//		if (to_purchase == my_inventory){
+//			int quantity_after_purchase = my_inventory.get_inventory_size() - amount;
+//			my_inventory.update_quantity(to_purchase, quantity_after_purchase);
+//
+//			my_customer.add_purchased_item_to_customer_history(to_purchase, amount);
+//		}
+//		else{
+//			false_count++;
+//		}
+//
+//	}
+//	if (false_count == my_inventory.get_inventory_size()){
+//		cout << "Product Not Found" << endl;
+//	}
+//
+//}
+//
+//
+//class Customer{
+//
+//private:
+//	Purchase customer_purchase;
+//	Item* purchased_items;
+//	int total_items_purchased = 0;
+//	
+//public:
+//
+//	void purchase(Item, int);
+//	void add_purchased_item_to_customer_history(Item, int);
+//
+//};
+//
+//void Customer::purchase(Item to_purchase, int amount){
+//	total_items_purchased++;
+//	customer_purchase.purchase(to_purchase, amount);
+//}
+//
+//void Customer::add_purchased_item_to_customer_history(Item purchased_item, int quantity_purchased){
+//
+//	if (total_items_purchased == 1){
+//		purchased_item.set_quantity(quantity_purchased);
+//		purchased_items = new Item[1];
+//		purchased_items[0] = purchased_item;
+//	}
+//
+//	else if (total_items_purchased > 1){
+//
+//		Item* temp_item = new Item[total_items_purchased - 1];
+//
+//		for (int i = 0; i < total_items_purchased - 1; i++){
+//			temp_item[i] = purchased_items[i];
+//		}
+//
+//		delete purchased_items;
+//
+//		purchased_items = new Item[total_items_purchased];
+//
+//		for (int i = 0; i < total_items_purchased - 1; i++){
+//			purchased_items[i] = temp_item[i];
+//		}
+//		purchased_items[total_items_purchased - 1] = purchased_item;
+//		purchased_items[total_items_purchased - 1].set_quantity(quantity_purchased);
+//	}
+//
+//}
+//
+//
+//class Sale_Employee{
+//
+//};
+//
+//class Reciept{
+//
+//public:
+//
+//	Sale_Employee counter_employee;
+//
+//
+//};
+//
+//
+//void interface (void){
+//
+//
+//
+//
+//
+//} 
+
+int count_file_data(string file_name){
+
+	ifstream read_data;
+	string file_line;
+
+	int counter = 0;
+
+	read_data.open(file_name);
+
+	while (!read_data.eof()){
+
+		getline(read_data, file_line, '\n');
+
+		if (file_line.length() > 0){
+			counter++;
+		}
+	}
+
+	read_data.close();
+
+	return counter;
+
+}
+
+
+void ReadFile(string file_name, Item* items, int total_items){
+
+	ifstream read_data;
+
+	read_data.open(file_name);
+
+	string R_ID;
+	string R_category;
+	string R_name;
+	float R_price;
+	int R_quantity;
+
+	for (int i = 0; i < total_items; i++){
+
+		getline(read_data, R_ID, '\t');
+		getline(read_data, R_category, '\t');
+		getline(read_data, R_name, '\t');
+		read_data >> R_price;
+		read_data >> R_quantity;
+
+		items[i].set_Item(R_ID, R_category, R_name, R_price, R_quantity);
+	}
+
+	read_data.close();
+
+}
+
+
+
+
+
+int main(){
+
+	string file_name = "inventory.txt";
+	int grocery_items_in_inventory = count_file_data(file_name);
+
+	Item* grocery_items = new Item[grocery_items_in_inventory];
+
+	ReadFile(file_name, grocery_items, grocery_items_in_inventory);
+	
+	/*Inventory grocery_inventory;
+
+	grocery_inventory.set_inventory_size(10);
+
+	Item a;
+	a.set_Item("A01", "Dairy", "Jhooley", 90.9, 8);
+
+	grocery_inventory.add_item(a);
+
+	grocery_inventory.search("Dairy");
+
+*/
+
+	return 0;
+}

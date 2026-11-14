@@ -1,0 +1,3 @@
+E001	Cashier	Kashif	89000	20/05/2023
+E002	Cashier	Murtaza	87100	12/05/2023
+E003	Manager	Iqbal	90110	01/05/2023
